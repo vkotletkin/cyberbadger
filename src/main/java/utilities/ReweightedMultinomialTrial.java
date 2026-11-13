@@ -35,10 +35,10 @@ public class ReweightedMultinomialTrial {
         double threshold = rateSum * random.nextDouble();
         double cumulative = 0.0;
         Integer index = Integer.MIN_VALUE;
-        for (Integer place : weights.keySet()) {
-            cumulative += weights.get(place);
+        for (Map.Entry<Integer, Double> weightedPlace : weights.entrySet()) {
+            cumulative += weightedPlace.getValue();
             if (cumulative > threshold) {
-                index = place;
+                index = weightedPlace.getKey();
                 break;
             }
         }

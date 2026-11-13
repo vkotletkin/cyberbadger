@@ -14,8 +14,8 @@ public class SpacePointGenerator {
     private final int dimension;
     private final double[] origin;
     private final Random random = new Random();
-    public final ToDoubleBiFunction<double[], double[]> distance = SpacePointGenerator::distance;
-    public final BiPredicate<double[], double[]> equalPoints = SpacePointGenerator::equalPoints;
+    public final ToDoubleBiFunction<double[], double[]> distance = SpacePointGenerator::euclideanDistance;
+    public final BiPredicate<double[], double[]> equalPoints = SpacePointGenerator::pointsAreEqual;
 
     /**
      * @param dimension ambient Euclidean dimension
@@ -71,7 +71,7 @@ public class SpacePointGenerator {
     /**
      * @return Euclidean distance, or {@link Double#NaN} when the lengths differ
      */
-    public static double distance(double[] left, double[] right) {
+    public static double euclideanDistance(double[] left, double[] right) {
         if (left.length != right.length) {
             return Double.NaN;
         }
@@ -86,7 +86,7 @@ public class SpacePointGenerator {
     /**
      * @return whether the points are at most one ulp apart and have the same length
      */
-    public static boolean equalPoints(double[] left, double[] right) {
-        return left.length == right.length && !(distance(left, right) > Math.ulp(1.0));
+    public static boolean pointsAreEqual(double[] left, double[] right) {
+        return left.length == right.length && euclideanDistance(left, right) <= Math.ulp(1.0);
     }
 }

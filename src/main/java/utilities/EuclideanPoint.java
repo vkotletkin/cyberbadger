@@ -1,7 +1,7 @@
 package utilities;
 
 /**
- * Point in a Euclidean metric space. Equality is distance below one ulp.
+ * Point in a Euclidean metric space. Near-equality is distance below one ulp.
  *
  * @author rwdarli
  */
@@ -29,7 +29,7 @@ public class EuclideanPoint implements Metrizable {
     }
 
     @Override
-    public boolean equals(Metrizable other) {
+    public boolean nearlyEquals(Metrizable other) {
         return distanceTo(other) < Math.ulp(1.0);
     }
 }

@@ -1,8 +1,12 @@
 package utilityTests;
 
+import org.junit.jupiter.api.Test;
 import utilities.CensoredMultinomialTrial;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Used only for development
@@ -14,16 +18,32 @@ public class CensoredMultinomialTest {
 
     private final CensoredMultinomialTrial cmt;
 
-    public CensoredMultinomialTest(int n) {
-        cmt = new CensoredMultinomialTrial(n);
+    public CensoredMultinomialTest() {
+        cmt = new CensoredMultinomialTrial(51);
     }
 
-    /**
-     * @param args
-     */
-    static void main(String[] args) {
+    @Test
+    void sampleReturnsTheOnlyAvailableCategory() {
+        CensoredMultinomialTrial sampler = new CensoredMultinomialTrial(3);
+        double[] rate = {1.0, 4.0, 9.0};
+        boolean[] unavailable = {true, false, true};
+
+        for (int draw = 0; draw < 20; draw++) {
+            assertEquals(1, sampler.sample(rate, unavailable));
+        }
+    }
+
+    @Test
+    void sampleRejectsArraysOfTheWrongLength() {
+        CensoredMultinomialTrial trial = new CensoredMultinomialTrial(3);
+
+        assertThrows(IllegalArgumentException.class,
+                () -> trial.sample(new double[1], new boolean[1]));
+    }
+
+    static void main() {
         final int n = 51;
-        CensoredMultinomialTest test = new CensoredMultinomialTest(n);
+        CensoredMultinomialTest test = new CensoredMultinomialTest();
         double[] rate = new double[n];
         /*
          * in this test the final rate component equals all the others put together

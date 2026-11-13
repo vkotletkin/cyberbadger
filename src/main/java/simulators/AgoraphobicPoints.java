@@ -99,16 +99,17 @@ public class AgoraphobicPoints {
             totalSamples++;
             int neighborCount = 0;
             for (double[] existing : points) {
-                if (SpacePointGenerator.distance(existing, candidate) < radius) {
+                if (SpacePointGenerator.euclideanDistance(existing, candidate) < radius) {
                     neighborCount++;
                 }
             }
-            if (random.nextDouble() < 1.0 / neighborCount) {
+            double acceptanceProbability = neighborCount == 0 ? 1.0 : 1.0 / neighborCount;
+            if (random.nextDouble() < acceptanceProbability) {
                 points.add(candidate);
                 rootedTree.putEdgeValue(
                         points.get(parent),
                         points.get(index),
-                        SpacePointGenerator.distance(points.get(parent), points.get(index)));
+                        SpacePointGenerator.euclideanDistance(points.get(parent), points.get(index)));
                 return;
             }
         }

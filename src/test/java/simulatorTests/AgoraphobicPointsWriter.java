@@ -21,7 +21,7 @@ public class AgoraphobicPointsWriter {
         this.dimension = dimension;
     }
 
-    static void main(String[] args) {
+    static void main() {
         try {
             int pointCount = 100;
             int dimension = 2;

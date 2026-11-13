@@ -1,11 +1,14 @@
 package utilityTests;
 
+import org.junit.jupiter.api.Test;
 import utilities.ReweightedMultinomialTrial;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Used only for development
@@ -21,10 +24,34 @@ public class ReweightedMultinomialTest {
         this.rmt = new ReweightedMultinomialTrial();
     }
 
-    /**
-     * @param args
-     */
-    static void main(String[] args) {
+    @Test
+    void sampleStaysInsidePlacesWithPositiveWeight() {
+        ReweightedMultinomialTrial trial = new ReweightedMultinomialTrial();
+        Set<Integer> places = Set.of(1, 3);
+        double[] rates = {0.0, 2.0, 0.0, 5.0};
+        double[] frequencies = {0.0, 1.0, 0.0, 1.0};
+
+        for (int draw = 0; draw < 20; draw++) {
+            assertTrue(places.contains(trial.sample(places, rates, frequencies)));
+        }
+    }
+
+    @Test
+    void zeroWeightsReturnTheSentinel() {
+        ReweightedMultinomialTrial trial = new ReweightedMultinomialTrial();
+
+        assertEquals(Integer.MIN_VALUE, trial.sample(Set.of(0), new double[]{0.0}, new double[]{1.0}));
+    }
+
+    @Test
+    void mismatchedArraysAreRejected() {
+        ReweightedMultinomialTrial trial = new ReweightedMultinomialTrial();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> trial.sample(Set.of(0), new double[]{1.0}, new double[]{1.0, 2.0}));
+    }
+
+    static void main() {
         final int n = 60; // overall set of states
         final int s = 35; // sample size
         double[] rate = new double[n];

@@ -1,11 +1,14 @@
 package utilityTests;
 
+import org.junit.jupiter.api.Test;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import utilities.HeavyTailPointProcess;
 import utilities.ScatterPlotInputData;
 
 import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Used only for development
@@ -20,10 +23,25 @@ public class HeavyTailPointProcessTest {
         pp = new HeavyTailPointProcess();
     }
 
-    /**
-     * @param args
-     */
-    static void main(String[] args) {
+    @Test
+    void arrivalsStayInsideTheWindowAndIncrease() {
+        double duration = 30.0;
+        double[] arrivals = new HeavyTailPointProcess().generate(duration, 0.01, 1.0, -2.5);
+
+        double previous = 0.0;
+        for (double arrival : arrivals) {
+            assertTrue(arrival >= previous);
+            assertTrue(arrival < duration);
+            previous = arrival;
+        }
+    }
+
+    @Test
+    void meanInterarrivalTimeIsPositive() {
+        assertTrue(new HeavyTailPointProcess().meanRate(0.01, 1.5, -2.5) > 0.0);
+    }
+
+    static void main() {
         final double duration = 100.0; // days
         // Gives about 15 events / day with these choices.
         final double lo = 1.0 / (30.0 * 24.0); // two minutes in days

@@ -31,7 +31,7 @@ public class HeavyTailPointProcess {
             arrivals.add(time);
         }
         double[] series = new double[arrivals.size() - 1];
-        Arrays.setAll(series, index -> arrivals.get(index));
+        Arrays.setAll(series, arrivals::get);
         return series;
     }
 

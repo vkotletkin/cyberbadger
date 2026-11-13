@@ -9,5 +9,8 @@ package utilities;
 public interface Metrizable {
     double distanceTo(Metrizable other);
 
-    boolean equals(Metrizable other);
+    /**
+     * @return whether {@code other} lies less than one ulp from this point
+     */
+    boolean nearlyEquals(Metrizable other);
 }

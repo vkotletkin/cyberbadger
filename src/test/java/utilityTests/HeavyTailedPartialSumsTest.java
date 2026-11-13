@@ -1,11 +1,16 @@
 package utilityTests;
 
+import org.junit.jupiter.api.Test;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import utilities.HeavyTailedPartialSums;
 import utilities.ScatterPlotInputData;
 
 import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Used only for development
@@ -20,11 +25,19 @@ public class HeavyTailedPartialSumsTest {
         ps = new HeavyTailedPartialSums();
     }
 
-    /**
-     * @param args
-     *
-     */
-    static void main(String[] args) {
+    @Test
+    void partialSumsIncreaseAndStayBelowOne() {
+        List<Double> sums = new HeavyTailedPartialSums().generate(50, 0.001, -1.5);
+
+        assertEquals(50, sums.size());
+        assertTrue(sums.get(0) > 0.0);
+        assertTrue(sums.get(sums.size() - 1) < 1.0);
+        for (int index = 1; index < sums.size(); index++) {
+            assertTrue(sums.get(index) >= sums.get(index - 1));
+        }
+    }
+
+    static void main() {
         final int count = 1000;
         // Take delta = 0.001 (about 1/30 divided by 36 hours), alpha = -1.5
         final double delta = 0.001; // two minutes / 1.5 days

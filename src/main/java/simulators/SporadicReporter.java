@@ -11,6 +11,7 @@ import utilities.Metrizable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 /**
  * Embeds a visit sequence in continuous time, then emits bursty report times
@@ -20,6 +21,7 @@ import java.util.Random;
  * @author rwdarli
  */
 public class SporadicReporter {
+    private static final Logger LOGGER = Logger.getLogger(SporadicReporter.class.getName());
     private static final double DAILY_ALPHA = 4.17;
     private static final double DAILY_BETA = 2.98;
 
@@ -88,7 +90,7 @@ public class SporadicReporter {
                 reportTimes.add(Math.floor(time) + dailySeasonality.inverseCumulativeProbability(time - Math.floor(time)));
             }
         } else {
-            System.out.println("Duration in days is insufficient for travel. No reports generated.");
+            LOGGER.warning("Duration in days is insufficient for travel. No reports generated.");
         }
     }
 

@@ -19,6 +19,9 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
  * Runs the three FRACTALRABBIT generators and writes synthetic waypoints to CSV.
@@ -29,6 +32,8 @@ import java.util.*;
  * @author rwdarli
  */
 public class MainClassFR {
+    private static final Logger LOGGER = Logger.getLogger(MainClassFR.class.getName());
+    private static final Pattern WHITESPACE = Pattern.compile("\\s");
     /**
      * Restart rate for the agoraphobic point process.
      */
@@ -107,7 +112,7 @@ public class MainClassFR {
                     DISTANCE_EXPONENT,
                     MAX_KILOMETERS_PER_HOUR,
                     KILOMETERS_PER_UNIT);
-            System.out.println(parameters.pointCount() + " points generated for fractal dimension "
+            LOGGER.info(() -> parameters.pointCount() + " points generated for fractal dimension "
                     + parameters.fractalDimension());
 
             // These generators are created before the shuffle so each Random is seeded in the original order.
@@ -123,15 +128,18 @@ public class MainClassFR {
             simulator.assignReports(countRandom, parameters.days());
             simulator.printFirstReports(parameters.travelerCount());
 
-            try {
-                simulator.writeCoordinateCsv(outputPath);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
+            writeCoordinateCsvHandlingFailure(simulator, outputPath);
             simulator.writePlacesCsv(outputPath);
         } catch (IOException ex) {
-            System.out.println(ex);
-            System.out.println("Could not find parameter file.");
+            LOGGER.log(Level.SEVERE, "Could not find parameter file.", ex);
+        }
+    }
+
+    private static void writeCoordinateCsvHandlingFailure(MainClassFR simulator, String outputPath) {
+        try {
+            simulator.writeCoordinateCsv(outputPath);
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "Could not write coordinate file.", ex);
         }
     }
 
@@ -156,9 +164,9 @@ public class MainClassFR {
     private static List<String> readParameterValues(String path) throws IOException {
         List<String> values = new ArrayList<>();
         try (Reader reader = new FileReader(path)) {
-            for (CSVRecord record : CSVFormat.RFC4180.parse(reader)) {
-                System.out.println(record.get(0) + " has value " + record.get(1));
-                values.add(record.get(1).replaceAll("\\s", ""));
+            for (CSVRecord csvRecord : CSVFormat.RFC4180.parse(reader)) {
+                LOGGER.info(() -> csvRecord.get(0) + " has value " + csvRecord.get(1));
+                values.add(WHITESPACE.matcher(csvRecord.get(1)).replaceAll(""));
             }
         }
         return values;
@@ -173,30 +181,28 @@ public class MainClassFR {
     }
 
     private void printCoTravellers(int trajectoryCount) {
-        System.out.println(trajectoryCount
-                + " trajectories generated, in which travelers assigned to same trajectory are: ");
-        for (Integer traveler : coTravellers) {
-            System.out.print(traveler + ", ");
-        }
-        System.out.println();
+        LOGGER.info(() -> trajectoryCount
+                + " trajectories generated, in which travelers assigned to same trajectory are: "
+                + coTravellers);
     }
 
     private void assignReports(PoissonVariate countRandom, double days) {
-        for (Integer traveler : trajectoryAssignment.keySet()) {
-            List<Integer> visits = trajectories.get(trajectoryAssignment.get(traveler));
+        for (Map.Entry<Integer, Integer> assignment : trajectoryAssignment.entrySet()) {
+            List<Integer> visits = trajectories.get(assignment.getValue());
             reporter.embedTrajectory(visits);
             reporter.generateReports(visits, countRandom.generate(), REPORT_DELTA, REPORT_ALPHA, days);
-            reportTimes.put(traveler, List.copyOf(reporter.getReportTimes()));
-            reportPlaces.put(traveler, List.copyOf(reporter.getReportPlaces()));
+            reportTimes.put(assignment.getKey(), List.copyOf(reporter.getReportTimes()));
+            reportPlaces.put(assignment.getKey(), List.copyOf(reporter.getReportPlaces()));
         }
     }
 
     private void printFirstReports(int travelerCount) {
-        for (Integer traveler : reportTimes.keySet()) {
-            System.out.println("First report for traveler " + traveler + " at time "
-                    + reportTimes.get(traveler).get(0) + " is place " + reportPlaces.get(traveler).get(0));
+        for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
+            Integer traveler = report.getKey();
+            LOGGER.info(() -> "First report for traveler " + traveler + " at time "
+                    + report.getValue().get(0) + " is place " + reportPlaces.get(traveler).get(0));
         }
-        System.out.println("Reports have been generated for " + travelerCount + " travelers.");
+        LOGGER.info(() -> "Reports have been generated for " + travelerCount + " travelers.");
     }
 
     private void writeCoordinateCsv(String outputPath) throws IOException {
@@ -204,14 +210,15 @@ public class MainClassFR {
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             csvPrinter.printRecord("ID", "Days", "x(km)", "y(km)");
             int lines = 0;
-            for (Integer traveler : reportTimes.keySet()) {
-                List<Double> times = reportTimes.get(traveler);
+            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
+                Integer traveler = report.getKey();
+                List<Double> times = report.getValue();
                 List<Integer> places = reportPlaces.get(traveler);
                 for (int index = 0; index < times.size(); index++) {
                     double time = times.get(index);
                     int place = places.get(index);
                     if (index == 0) {
-                        System.out.println("First report for traveler " + traveler + " is point "
+                        LOGGER.info(() -> "First report for traveler " + traveler + " is point "
                                 + place + " at time " + time);
                     }
                     double x = KILOMETERS_PER_UNIT * points.getPoints().get(place)[0];
@@ -220,7 +227,8 @@ public class MainClassFR {
                     lines++;
                 }
             }
-            System.out.println("CSV file created with " + lines + " lines, called " + outputPath + "XY.csv");
+            int writtenLines = lines;
+            LOGGER.info(() -> "CSV file created with " + writtenLines + " lines, called " + outputPath + "XY.csv");
             csvPrinter.flush();
             writer.flush();
         }
@@ -231,15 +239,17 @@ public class MainClassFR {
              CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             csvPrinter.printRecord("Traveler ID", "Days", "Place ID");
             int lines = 0;
-            for (Integer traveler : reportTimes.keySet()) {
-                List<Double> times = reportTimes.get(traveler);
+            for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
+                Integer traveler = report.getKey();
+                List<Double> times = report.getValue();
                 List<Integer> places = reportPlaces.get(traveler);
                 for (int index = 0; index < times.size(); index++) {
                     csvPrinter.printRecord(traveler, times.get(index), places.get(index));
                     lines++;
                 }
             }
-            System.out.println("CSV Places file created with " + lines + " lines, called " + outputPath + "PLACES.csv");
+            int writtenLines = lines;
+            LOGGER.info(() -> "CSV Places file created with " + writtenLines + " lines, called " + outputPath + "PLACES.csv");
             csvPrinter.flush();
             writer.flush();
         }

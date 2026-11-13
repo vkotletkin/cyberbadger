@@ -21,7 +21,7 @@ public class HeavyTailedPartialSums {
      */
     public List<Double> generate(int size, double delta, double alpha) {
         double u1 = Math.pow(delta, 1.0 / alpha);
-        double[] partialSums = random.doubles(size + 1)
+        double[] partialSums = random.doubles((long) size + 1)
                 .map(uniform -> Math.pow(1.0 + (u1 - 1.0) * uniform, alpha))
                 .toArray();
         Arrays.parallelPrefix(partialSums, Double::sum);
