@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author rwdarli
  * @see utilities.PoissonVariate
  */
-public class PoissonVariateTest {
+class PoissonVariateTest {
 
     private final PoissonVariate pv;
 

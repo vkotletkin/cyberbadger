@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author rwdarli
  * @see utilities.ReweightedMultinomialTrial
  */
-public class ReweightedMultinomialTest {
+class ReweightedMultinomialTest {
 
     ReweightedMultinomialTrial rmt;
 
@@ -46,9 +46,11 @@ public class ReweightedMultinomialTest {
     @Test
     void mismatchedArraysAreRejected() {
         ReweightedMultinomialTrial trial = new ReweightedMultinomialTrial();
+        Set<Integer> places = Set.of(0);
+        double[] rates = {1.0};
+        double[] frequencies = {1.0, 2.0};
 
-        assertThrows(IllegalArgumentException.class,
-                () -> trial.sample(Set.of(0), new double[]{1.0}, new double[]{1.0, 2.0}));
+        assertThrows(IllegalArgumentException.class, () -> trial.sample(places, rates, frequencies));
     }
 
     static void main() {

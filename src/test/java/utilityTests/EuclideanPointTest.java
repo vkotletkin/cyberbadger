@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author rwdarli
  * @see utilities.EuclideanPoint
  */
-public class EuclideanPointTest {
+class EuclideanPointTest {
 
     @Test
     void distanceOfAThreeFourFiveTriangleIsFive() {

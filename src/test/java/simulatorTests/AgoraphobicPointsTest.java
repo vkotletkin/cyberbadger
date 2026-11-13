@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @see simulators.AgoraphobicPoints
  */
-public class AgoraphobicPointsTest {
+class AgoraphobicPointsTest {
 
     private final int dimension;
 

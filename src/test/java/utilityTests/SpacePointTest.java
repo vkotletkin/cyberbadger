@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author rwdarli
  * @see utilities.SpacePointGenerator
  */
-public class SpacePointTest {
+class SpacePointTest {
 
 
     SpacePointGenerator x;

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author rwdarli
  * @see utilities.IrregularBinAssignment
  */
-public class IrregularBinTest {
+class IrregularBinTest {
 
     private final IrregularBinAssignment<Double> iba;
 

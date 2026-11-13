@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author rwdarli
  * @see utilities.CensoredMultinomialTrial
  */
-public class CensoredMultinomialTest {
+class CensoredMultinomialTest {
 
     private final CensoredMultinomialTrial cmt;
 

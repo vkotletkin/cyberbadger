@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author rwdarli
  * @see utilities.HeavyTailPointProcess
  */
-public class HeavyTailPointProcessTest {
+class HeavyTailPointProcessTest {
     private final HeavyTailPointProcess pp;
 
     public HeavyTailPointProcessTest() {

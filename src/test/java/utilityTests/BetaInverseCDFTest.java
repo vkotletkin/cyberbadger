@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author rwdarli
  * @see simulators.SporadicReporter
  */
-public class BetaInverseCDFTest {
+class BetaInverseCDFTest {
 
     private final BetaDistribution dist;
 

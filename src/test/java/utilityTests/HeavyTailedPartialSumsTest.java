@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author rwdarli
  * @see utilities.HeavyTailedPartialSums
  */
-public class HeavyTailedPartialSumsTest {
+class HeavyTailedPartialSumsTest {
     private final HeavyTailedPartialSums ps;
 
     public HeavyTailedPartialSumsTest() {
