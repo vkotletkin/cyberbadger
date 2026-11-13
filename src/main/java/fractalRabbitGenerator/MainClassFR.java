@@ -200,7 +200,7 @@ public class MainClassFR {
         for (Map.Entry<Integer, List<Double>> report : reportTimes.entrySet()) {
             Integer traveler = report.getKey();
             LOGGER.info(() -> "First report for traveler " + traveler + " at time "
-                    + report.getValue().get(0) + " is place " + reportPlaces.get(traveler).get(0));
+                    + report.getValue().getFirst() + " is place " + reportPlaces.get(traveler).getFirst());
         }
         LOGGER.info(() -> "Reports have been generated for " + travelerCount + " travelers.");
     }

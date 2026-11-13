@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * @author rwdarli
  */
 public class SporadicReporter {
+
     private static final Logger LOGGER = Logger.getLogger(SporadicReporter.class.getName());
     private static final double DAILY_ALPHA = 4.17;
     private static final double DAILY_BETA = 2.98;

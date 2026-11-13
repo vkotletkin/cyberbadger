@@ -88,7 +88,7 @@ public class AgoraphobicPoints {
         points.add(pointGenerator.samplePointUnitDisk());
         totalSamples++;
         double[] child = points.get(index);
-        rootedTree.putEdgeValue(points.get(0), child, Math.sqrt(pointGenerator.sumSquares(child)));
+        rootedTree.putEdgeValue(points.getFirst(), child, Math.sqrt(pointGenerator.sumSquares(child)));
     }
 
     private void addPointNearRandomParent(int index) {
