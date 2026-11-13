@@ -1,74 +1,77 @@
-<p align="center">
-  <a href="URL">
-    <img src="https://github.com/NationalSecurityAgency/fractalrabbit/blob/master/resources/Rabbit-CreativeCommonsImage..jpg" alt="" width=370 height=247>
-  </a>
+# Cyberbadger
 
-  <h3 align="center">FRACTALRABBIT</h3>
-<p>
-In modelling a sequence of adaptive choices by an intelligent agent (e.g. places visited, web sites browsed), memory-less random walks are unsuitable, because of the formation of agent habits and preferences. 
- </p>
+Cyberbadger строит синтетические маршруты: набор мест, траектории путешественников и редкие отчёты о том, где их видели.
+Такие данные нужны, чтобы проверять алгоритмы на неполных наблюдениях — поиск попутчиков, обнаружение аномалий,
+выделение согласованных подмножеств в испорченных данных.
 
-<p>
- Often these choices are only partially observed, and report times are sporadic and bursty, in contrast to regular or exponentially spaced times in classical models. 
-</p>
+Память агента здесь существенна. Беспамятное случайное блуждание не годится: у человека и животного появляются привычные
+места и возвраты домой. Время отчётов тоже не регулярное и не экспоненциальное: наблюдения идут пачками, а паузы между
+ними имеют тяжёлый хвост.
 
-<p>
-The FRACTALRABBIT stochastic mobility simulator creates realistic synthetic sporadic waypoint data sets. It consist of three tiers, each based on new stochastic models: </p>
+Модель состоит из трёх ярусов.
 
-  <p align="center">	
-	 (1) An Agoraphobic Point Process generates a set V of space points, whose limit is a random fractal, representing sites that could be visited. </p>
+1. **Агорафобный точечный процесс** строит множество мест. Предел облака точек — случайный фрактал.
+2. **Ретро-предпочтительный процесс** проводит траекторию по этим местам: новые точки исследуются, а уже посещённые
+   притягивают тем сильнее, чем чаще в них бывали и чем они ближе.
+3. **Спорадические отчёты** выбирают моменты, в которые траектория видна. Переход между местами занимает время, поэтому
+   отчёт не попадает внутрь перемещения, которое нарушило бы предел скорости.
 
-  <p align="center">	(2) A Retro-preferential Process generates a trajectory X through V , with strategic homing and self-reinforcing site ﬁdelity as observed in human/animal behavior. </p>
+Несколько попутчиков могут идти по одной и той же последовательности мест, но отчитываться в разные моменты.
 
-  <p align="center">	 (3) A Sporadic Reporting Process models time points T at which the trajectory X is observed, with bursts of reports and heavy tailed inter-event times.</p>
-  </p>
-</p>
-<p>
- FRACTALRABBIT can be used to test algorithms applicable to sporadic waypoint data, such as (1) co-travel mining, (2) anomaly detection, and (3) extraction of maximal self-consistent subsets of corrupted data.
-<p>
-<p>
-Reference: R. W. R. Darling, "Retro-preferential Stochastic Mobility Models on Random Fractals Under Sporadic Observations", 
-<a href = "https://www.researchgate.net/publication/340741639_Retro-preferential_Stochastic_Mobility_Models_on_Random_Fractals_Under_Sporadic_Observations">DOI: 10.13140/RG.2.2.15267.40489</a>, 2018
-<p>
+## Запуск
 
-<br>
+Нужны JDK 25 и Maven.
 
-## Table of contents
+```bash
+mvn -q package assembly:single
+java -jar target/fractalrabbit-1.0-jar-with-dependencies.jar resources/parameters.csv out
+```
 
-- [Status](#status)
-- [Bugs and feature requests](#bugs-and-feature-requests)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [Community](#community)
-- [Versioning](#versioning)
-- [Creators](#creators)
-- [Copyright and license](#copyright-and-license)
+Второй аргумент — префикс имён выходных файлов. Команда выше создаёт `outXY.csv` и `outPLACES.csv`. Пример параметров
+лежит в `resources/parameters.csv`.
 
-## Status
-Java version runs from the command line:
-<p>
-	java -jar fractalrabbit.jar parameters.csv outputfilename.csv</p>
-<p>	
-An example of the parameters.csv file is provided in the resources folder.
-Change it to suit your modelling needs. 
-It permits multiple travellers to follow the same trajectory asynchronously.
-</p>	
+Проверка сборки:
 
-## Bugs and feature requests
-- Have a bug or a feature request? Contact Github user bbux-atg
+```bash
+mvn test
+```
 
-## Documentation
-- See <a href="https://github.com/NationalSecurityAgency/fractalrabbit/wiki">Wiki</a>. 
+## Параметры
 
-## Contributing
-- New implementations of the three underlying models described in the technical report are welcome.
+Файл — CSV без заголовка. В каждой строке название и значение через запятую. Пробелы в значении отбрасываются.
 
-## Creators
+| Строка | Пример  | Смысл                                                                |
+|--------|---------|----------------------------------------------------------------------|
+| 1      | `2`     | Размерность пространства                                             |
+| 2      | `1.33`  | Фрактальная размерность облака мест, меньше размерности пространства |
+| 3      | `5000`  | Число мест                                                           |
+| 4      | `3000`  | Число путешественников                                               |
+| 5      | `1`     | Сколько из них делят одну траекторию                                 |
+| 6      | `14.0`  | Окно наблюдения, сутки                                               |
+| 7      | `200.0` | Среднее число отчётов на путешественника                             |
 
-**R. W. R. Darling**
-<a href=https://sites.google.com/view/probabilist-us/home>bio</a>
-Github: probabilist-us
+Остальные величины заданы в программе: темп новых кластеров `0.75`, скорость перехода убывает как квадрат расстояния,
+предел скорости `50` км/ч, одна единица модели равна `200` км, средняя длина траектории `100` шагов, интервалы отчётов —
+усечённое Парето с нижней границей `0.001` и показателем хвоста `-1.5`.
 
-## Copyright and license
+Координаты в `outXY.csv` считаются по первым двум осям. Для размерности, отличной от 2, этот файл не подходит;
+`outPLACES.csv` от размерности не зависит.
 
-Apache License 2.0
+## Результат
+
+`outXY.csv` — идентификатор путешественника, время в сутках, координаты `x` и `y` в километрах.
+
+`outPLACES.csv` — идентификатор путешественника, время в сутках, номер места.
+
+## Исходная модель
+
+Алгоритм — FRACTALRABBIT Р. У. Р. Дарлинга,
+опубликованный [National Security Agency](https://github.com/NationalSecurityAgency/fractalrabbit). Описание модели: R.
+W. R. Darling, «Retro-preferential Stochastic Mobility Models on Random Fractals Under Sporadic
+Observations», [DOI: 10.13140/RG.2.2.15267.40489](https://www.researchgate.net/publication/340741639_Retro-preferential_Stochastic_Mobility_Models_on_Random_Fractals_Under_Sporadic_Observations),
+2018.
+
+## Лицензия
+
+Apache License 2.0. Текст — в файле `LICENSE`. Часть исходного кода создана сотрудником правительства США при исполнении
+служебных обязанностей и находится в общественном достоянии; подробности в `NOTICE`.
