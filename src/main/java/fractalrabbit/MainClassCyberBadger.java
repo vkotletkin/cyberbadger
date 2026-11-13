@@ -31,8 +31,8 @@ import java.util.regex.Pattern;
  *
  * @author rwdarli
  */
-public class MainClassFR {
-    private static final Logger LOGGER = Logger.getLogger(MainClassFR.class.getName());
+public class MainClassCyberBadger {
+    private static final Logger LOGGER = Logger.getLogger(MainClassCyberBadger.class.getName());
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     /**
      * Restart rate for the agoraphobic point process.
@@ -85,7 +85,7 @@ public class MainClassFR {
      * @param maxKmPerHour speed bound for travelers
      * @param kmPerUnit    kilometers per abstract distance unit
      */
-    public MainClassFR(int n, int d, double h, double theta, double exponent, double maxKmPerHour, double kmPerUnit) {
+    public MainClassCyberBadger(int n, int d, double h, double theta, double exponent, double maxKmPerHour, double kmPerUnit) {
         points = new AgoraphobicPoints(n, d, h, theta);
         points.generatePoints();
         EuclideanPoint[] metricPoints = new EuclideanPoint[points.getPoints().size()];
@@ -104,7 +104,7 @@ public class MainClassFR {
             Parameters parameters = Parameters.parse(values);
             String outputPath = args[1];
 
-            MainClassFR simulator = new MainClassFR(
+            MainClassCyberBadger simulator = new MainClassCyberBadger(
                     parameters.pointCount(),
                     parameters.dimension(),
                     parameters.fractalDimension(),
@@ -135,7 +135,7 @@ public class MainClassFR {
         }
     }
 
-    private static void writeCoordinateCsvHandlingFailure(MainClassFR simulator, String outputPath) {
+    private static void writeCoordinateCsvHandlingFailure(MainClassCyberBadger simulator, String outputPath) {
         try {
             simulator.writeCoordinateCsv(outputPath);
         } catch (IOException ex) {
