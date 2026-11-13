@@ -63,7 +63,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>fractalRabbitGenerator.MainClassFR</mainClass>
+							<mainClass>fractalrabbit.MainClassFR</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
