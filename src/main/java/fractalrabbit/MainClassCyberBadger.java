@@ -3,14 +3,14 @@
  */
 package fractalrabbit;
 
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.CSVRecord;
 import fractalrabbit.geometry.EuclideanPoint;
 import fractalrabbit.probability.PoissonVariate;
 import fractalrabbit.simulation.AgoraphobicPoints;
 import fractalrabbit.simulation.Retropreferential;
 import fractalrabbit.simulation.SporadicReporter;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.BufferedWriter;
 import java.io.FileReader;
@@ -143,6 +143,17 @@ public class MainClassCyberBadger {
         }
     }
 
+    private static List<String> readParameterValues(String path) throws IOException {
+        List<String> values = new ArrayList<>();
+        try (Reader reader = new FileReader(path)) {
+            for (CSVRecord csvRecord : CSVFormat.RFC4180.parse(reader)) {
+                LOGGER.info(() -> csvRecord.get(0) + " has value " + csvRecord.get(1));
+                values.add(WHITESPACE.matcher(csvRecord.get(1)).replaceAll(""));
+            }
+        }
+        return values;
+    }
+
     /**
      * Assigns travelers to trajectories. The first {@code numCoTravelers} ids in a
      * random shuffle share trajectory 0; everyone else gets a distinct trajectory.
@@ -159,17 +170,6 @@ public class MainClassCyberBadger {
         for (int index = numCoTravelers; index < numTravelers; index++) {
             trajectoryAssignment.put(shuffled.get(index), index - numCoTravelers + 1);
         }
-    }
-
-    private static List<String> readParameterValues(String path) throws IOException {
-        List<String> values = new ArrayList<>();
-        try (Reader reader = new FileReader(path)) {
-            for (CSVRecord csvRecord : CSVFormat.RFC4180.parse(reader)) {
-                LOGGER.info(() -> csvRecord.get(0) + " has value " + csvRecord.get(1));
-                values.add(WHITESPACE.matcher(csvRecord.get(1)).replaceAll(""));
-            }
-        }
-        return values;
     }
 
     private void addTrajectories(int trajectoryCount, int pointCount, PoissonVariate phiRandom,

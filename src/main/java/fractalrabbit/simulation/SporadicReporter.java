@@ -3,10 +3,10 @@
  */
 package fractalrabbit.simulation;
 
-import org.apache.commons.math3.distribution.BetaDistribution;
 import fractalrabbit.geometry.Metrizable;
 import fractalrabbit.probability.HeavyTailedPartialSums;
 import fractalrabbit.probability.IrregularBinAssignment;
+import org.apache.commons.math3.distribution.BetaDistribution;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,10 +4,10 @@ package fractalrabbit.simulation;
  * Passed April 4, 2018.
  */
 
+import fractalrabbit.plot.ScatterPlotInputData;
 import org.junit.jupiter.api.Test;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
-import fractalrabbit.plot.ScatterPlotInputData;
 
 import java.util.Arrays;
 
